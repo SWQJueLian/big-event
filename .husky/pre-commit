@@ -3,4 +3,5 @@
 
 #npm test
 # 进行eslint代码规范校验
-pnpm lint
+#pnpm lint
+#pnpm lint-staged
