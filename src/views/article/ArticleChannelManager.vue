@@ -5,11 +5,14 @@ import { ref } from 'vue'
 
 // 定义data
 const articleChannelList = ref([])
+const isLoading = ref(true) // 控制数据加载loading标记位
 
 // 直接定义函数
 const initArticleChannelList = async () => {
   const resp = await articleGetDataListService()
   articleChannelList.value = resp.data
+  // 初始化完成后将loading设置位false，取消loading效果。
+  isLoading.value = false
 }
 
 // 等同于图created钩子函数中执行
@@ -30,7 +33,11 @@ const handleDel = (row, index) => {
     </template>
     <template #default>
       <!-- :data 指定表格数据， 是一个数组，里面是对象。-->
-      <el-table :data="articleChannelList" style="width: 100%">
+      <el-table
+        v-loading="isLoading"
+        :data="articleChannelList"
+        style="width: 100%"
+      >
         <!--
         label: 指定表头名
         prop: 指定列渲染的数据是来源自:data中指定的哪一项数据
