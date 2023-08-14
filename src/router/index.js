@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useUserStore } from '@/stores'
 
 const router = createRouter({
   // history： 用于指定路由模式，
@@ -43,6 +44,27 @@ const router = createRouter({
       ]
     }
   ]
+})
+
+const notNeedLoginUrls = ['/login']
+// 路由全局前置守卫
+router.beforeEach((to) => {
+  // store实例不能放在外面，此时pinia还没初始化，会报错....
+  const userStore = useUserStore()
+  // 由于项目基本上全部都要登录才能访问，所以定义一个不需要登录的素组路由
+  // 判断去往的路由是否包含在这个不需要登录的路由数组里面
+  if (!notNeedLoginUrls.includes(to.path)) {
+    if (!userStore.token) {
+      return '/login'
+    } else {
+      // 这里else不用写的，只是为了学习加深记忆
+      return true
+    }
+  } else {
+    // 如果什么都没有，undefined 或返回 true，则导航是有效的，并调用下一个导航守卫
+    // 也就是直接放行了
+    return true
+  }
 })
 
 export default router
