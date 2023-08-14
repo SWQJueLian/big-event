@@ -1,8 +1,15 @@
 <script setup>
 import { User, Lock, Key } from '@element-plus/icons-vue'
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
+import { ElMessage } from 'element-plus'
+import { userLoginService, userRegisterService } from '@/apis/user'
+import { useUserStore } from '@/stores'
+import { useRouter } from 'vue-router'
 
-const isRegister = ref(true)
+const userStore = useUserStore()
+const router = useRouter()
+
+const isRegister = ref(false)
 
 // 整个from表单的绑定数据对象
 const fromModel = reactive({
@@ -46,6 +53,49 @@ const fromRules = reactive({
     }
   ]
 })
+// 表单组件引用
+const fromRef = ref()
+const handlerRegister = async () => {
+  // 注册前也要对表单进行校验
+  // 可以使用ref引用表单组件中的方法进行校验
+  await fromRef.value.validate()
+  const resp = await userRegisterService(
+    fromModel.username,
+    fromModel.password,
+    fromModel.repassword
+  )
+  console.log('注册用户', resp)
+  ElMessage.success('注册成功！')
+  const tmp_username = fromModel.username
+  // 切换为登录显示
+  isRegister.value = false
+  // 切回登录页后密码和用户名都被watch监听器清空了，但是需要注册成功后默认填写用户名，则需要用变量临时保存起来再设置
+  console.log('临时用户名记录：', tmp_username)
+  // 要价格延时，不然都被watch清理了，watch执行比代码顺序执行还要慢一些
+  setTimeout(() => {
+    fromModel.username = tmp_username
+    console.log(fromModel)
+  }, 300)
+}
+
+const handlerLogin = async () => {
+  // 可以使用ref引用表单组件中的方法进行校验
+  await fromRef.value.validate()
+  const resp = await userLoginService(fromModel.username, fromModel.password)
+  console.log(resp)
+  // 赋值token
+  userStore.token = resp.token
+  // 弹出消息提示
+  ElMessage.success('登录成功！')
+  // 跳转到首页
+  router.push('/')
+}
+
+watch(isRegister, () => {
+  fromModel.username = ''
+  fromModel.password = ''
+  fromModel.repassword = ''
+})
 </script>
 
 <template>
@@ -55,9 +105,10 @@ const fromRules = reactive({
       <el-form
         :model="fromModel"
         :rules="fromRules"
-        ref="form"
+        ref="fromRef"
         size="large"
         autocomplete="off"
+        status-icon
         v-if="isRegister"
       >
         <el-form-item>
@@ -87,7 +138,12 @@ const fromRules = reactive({
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button class="button" type="primary" auto-insert-space>
+          <el-button
+            @click="handlerRegister"
+            class="button"
+            type="primary"
+            auto-insert-space
+          >
             注册
           </el-button>
         </el-form-item>
@@ -97,15 +153,27 @@ const fromRules = reactive({
           </el-link>
         </el-form-item>
       </el-form>
-      <el-form ref="form" size="large" autocomplete="off" v-else>
+      <el-form
+        ref="fromRef"
+        :model="fromModel"
+        :rules="fromRules"
+        size="large"
+        autocomplete="off"
+        v-else
+      >
         <el-form-item>
           <h1>登录</h1>
         </el-form-item>
-        <el-form-item>
-          <el-input :prefix-icon="User" placeholder="请输入用户名"></el-input>
-        </el-form-item>
-        <el-form-item>
+        <el-form-item prop="username">
           <el-input
+            v-model="fromModel.username"
+            :prefix-icon="User"
+            placeholder="请输入用户名"
+          ></el-input>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input
+            v-model="fromModel.password"
             name="password"
             :prefix-icon="Lock"
             type="password"
@@ -119,7 +187,11 @@ const fromRules = reactive({
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button class="button" type="primary" auto-insert-space
+          <el-button
+            @click="handlerLogin"
+            class="button"
+            type="primary"
+            auto-insert-space
             >登录
           </el-button>
         </el-form-item>
