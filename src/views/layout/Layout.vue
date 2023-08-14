@@ -15,11 +15,39 @@ import {
   CaretBottom
 } from '@element-plus/icons-vue'
 import avatar from '@/assets/default.png'
+import { ElMessageBox } from 'element-plus'
+import { useRouter } from 'vue-router'
 
 const userStore = useUserStore()
 
 // 初始化用户基本信息
 userStore.getUserInfo()
+
+const router = useRouter()
+
+const handlerCommand = (command) => {
+  // command 为下来菜单项目的指定的具体command属性
+  // ElMessage.success(command)
+  // 由于command直接按照路由来配置了，所以直接判断如果不是logout，都使用路由跳转
+  if (command !== 'logout') {
+    router.push(`/user/${command}`)
+  } else {
+    // 否则，弹出退出登录确认框，提示用户是否需要退出登录，因为有可能是误点了
+    ElMessageBox.confirm(
+      '您确定要退出登录吗？', // 提示内容
+      '警告', // 消息标题
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning' // 消息框类型，用于自动添加相应的图标显示
+      }
+    )
+      .then(() => {
+        userStore.logout()
+      })
+      .catch(() => {})
+  }
+}
 </script>
 
 <template>
@@ -90,11 +118,13 @@ userStore.getUserInfo()
             userStore.userInfo.nickname || userStore.userInfo.username
           }}</strong>
         </div>
-        <el-dropdown placement="bottom-end">
+        <el-dropdown placement="bottom-end" @command="handlerCommand">
+          <!-- 默认插槽是下拉菜单的展示方式 -->
           <span class="el-dropdown__box">
             <el-avatar :src="userStore.userInfo.user_pic || avatar" />
             <el-icon><CaretBottom /></el-icon>
           </span>
+          <!-- dropdown插槽是具体的下拉菜单项 -->
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item command="profile" :icon="User">

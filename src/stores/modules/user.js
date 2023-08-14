@@ -34,12 +34,19 @@ export const useUserStore = defineStore(
       userInfo.value = resp.data
     }
 
+    // 登出
+    const logout = () => {
+      userInfo.value = {}
+      token.value = ''
+    }
+
     return {
       token,
       setUserToken,
       deleteUserToken,
       getUserInfo,
-      userInfo
+      userInfo,
+      logout
     }
   },
   {
