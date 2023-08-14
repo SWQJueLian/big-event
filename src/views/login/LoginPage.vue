@@ -7,8 +7,8 @@ const isRegister = ref(true)
 
 <template>
   <el-row class="login-page">
-    <el-col :span="12" class="bg"></el-col>
-    <el-col :span="6" :offset="3" class="form">
+    <el-col :span="10" class="bg"></el-col>
+    <el-col :span="6" :offset="4" class="form">
       <el-form ref="form" size="large" autocomplete="off" v-if="isRegister">
         <el-form-item>
           <h1>注册</h1>
