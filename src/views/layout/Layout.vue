@@ -1,4 +1,6 @@
 <script setup>
+import { useUserStore } from '@/stores'
+
 defineOptions({
   name: 'LayoutPage'
 })
@@ -13,6 +15,11 @@ import {
   CaretBottom
 } from '@element-plus/icons-vue'
 import avatar from '@/assets/default.png'
+
+const userStore = useUserStore()
+
+// 初始化用户基本信息
+userStore.getUserInfo()
 </script>
 
 <template>
@@ -78,10 +85,14 @@ import avatar from '@/assets/default.png'
     </el-aside>
     <el-container>
       <el-header>
-        <div>欢迎您：<strong>小帅鹏</strong></div>
+        <div>
+          欢迎您：<strong>{{
+            userStore.userInfo.nickname || userStore.userInfo.username
+          }}</strong>
+        </div>
         <el-dropdown placement="bottom-end">
           <span class="el-dropdown__box">
-            <el-avatar :src="avatar" />
+            <el-avatar :src="userStore.userInfo.user_pic || avatar" />
             <el-icon><CaretBottom /></el-icon>
           </span>
           <template #dropdown>

@@ -17,3 +17,8 @@ export const userLoginService = (username, password) => {
     password
   })
 }
+
+// 用户信息获取
+export const userBasicInfoService = () => {
+  return request.get('/my/userinfo')
+}
