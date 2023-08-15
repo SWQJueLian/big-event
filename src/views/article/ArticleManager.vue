@@ -2,10 +2,12 @@
 import BaseContainer from '@/components/BaseContainer.vue'
 import {
   articleGetDataListService,
-  articleGetArticleListService
+  articleGetArticleListService,
+  articleDelArticleService
 } from '@/apis/article'
 
 import { ref } from 'vue'
+import { ElMessage } from 'element-plus'
 
 // 文章分类数据
 const articleChannelList = ref([])
@@ -42,9 +44,13 @@ initArticleChannelData()
 const handlerEditAricle = (row) => {
   console.log(row)
 }
+
 // 删除文章处理事件
-const handlerDelAricle = (row) => {
-  console.log(row)
+const handlerDelAricle = async ({ id }) => {
+  console.log(id)
+  await articleDelArticleService(id)
+  initArticleData()
+  ElMessage.success('删除文章成功')
 }
 
 // 重置搜索条件
