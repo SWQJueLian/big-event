@@ -44,6 +44,8 @@ const handlerCommand = (command) => {
     )
       .then(() => {
         userStore.logout()
+        // 清空数据后跳转到登录页面
+        router.push('/login')
       })
       .catch(() => {})
   }
