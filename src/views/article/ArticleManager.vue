@@ -9,6 +9,8 @@ import {
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 
+import * as dayjs from 'dayjs'
+
 // 文章分类数据
 const articleChannelList = ref([])
 
@@ -102,7 +104,11 @@ const resetSearch = () => {
         <el-table :data="articleDataList" style="width: 100%">
           <el-table-column prop="title" label="标题"></el-table-column>
           <el-table-column prop="cate_name" label="分类"></el-table-column>
-          <el-table-column prop="pub_date" label="发布时间"></el-table-column>
+          <el-table-column prop="pub_date" label="发布时间">
+            <template #default="scope">
+              {{ dayjs(scope.row.pub_date).format('YYYY-MM-DD HH:mm:ss') }}
+            </template>
+          </el-table-column>
           <el-table-column prop="state" label="状态"></el-table-column>
           <el-table-column label="操作">
             <template #default="scope">
