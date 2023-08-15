@@ -1,5 +1,6 @@
 import request from '@/utils/request'
 
+// 获取文章分类列表
 export const articleGetDataListService = () => {
   return request.get('/my/cate/list')
 }
@@ -23,5 +24,12 @@ export const articleDelChannelService = (id) => {
     params: {
       id
     }
+  })
+}
+
+// 获取文章列表
+export const articleGetArticleListService = (data) => {
+  return request.get('/my/article/list', {
+    params: data
   })
 }
