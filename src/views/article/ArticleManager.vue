@@ -28,12 +28,16 @@ const queryParams = ref({
 // 记录当前搜索条件下的总页数
 const totalPage = ref()
 
+const isLoading = ref(false)
+
 const initArticleData = async () => {
+  isLoading.value = true
   // 获取文章详情
   const resp2 = await articleGetArticleListService(queryParams.value)
   // console.log('文章列表数据：', resp2)
   articleDataList.value = resp2.data
   totalPage.value = resp2.total
+  isLoading.value = false
 }
 
 const initArticleChannelData = async () => {
@@ -127,7 +131,11 @@ const onSearchClick = () => {
           </el-form-item>
         </el-form>
         <!-- 中间表格 -->
-        <el-table :data="articleDataList" style="width: 100%">
+        <el-table
+          v-loading="isLoading"
+          :data="articleDataList"
+          style="width: 100%"
+        >
           <el-table-column prop="title" label="标题">
             <template #default="scope">
               <el-link type="primary">{{ scope.row.title }}</el-link>
