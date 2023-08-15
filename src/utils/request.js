@@ -32,7 +32,7 @@ axiosInstance.interceptors.response.use(
   function (response) {
     // 对响应数据做点什么
     // 添加统一处理非200状态码错误提示
-    console.log(response)
+    // console.log(response)
     const data = response.data
     // 后端返回的code字段非0表示不正常
     if (response.status === 200 && data.code === 0) {
