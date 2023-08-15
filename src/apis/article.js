@@ -38,3 +38,10 @@ export const articleGetArticleListService = (data) => {
 export const articleDelArticleService = (id) => {
   return request.delete('/my/article/info', { params: { id } })
 }
+
+// 获取文章详情
+export const articleGetArticleDetailService = (id) => {
+  return request.get('/my/article/info', {
+    params: { id }
+  })
+}
