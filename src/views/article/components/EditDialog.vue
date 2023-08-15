@@ -12,6 +12,9 @@ const dialogVisible = ref(false)
 // 自定义标题
 const custtitle = ref('')
 
+// 表单ref引用
+const fromRef = ref()
+
 // 表单绑定数据对象
 const rowData = ref({
   id: '',
@@ -47,8 +50,11 @@ const emits = defineEmits(['updateData'])
 
 // 点击“确定”按钮处理函数
 const handlerConfirm = async () => {
+  // 先校验表单再提交修改或者新增请求
+  await fromRef.value.validate()
+  const isEdit = rowData.value.id
   // 有ID就代表是编辑模式，没有就是添加
-  if (rowData.value.id) {
+  if (isEdit) {
     // 发送编辑请求
     const resp = await articleUpdateChannelService(rowData.value)
     console.log('编辑分类', resp)
@@ -62,7 +68,7 @@ const handlerConfirm = async () => {
   }
   // 关闭对话框
   dialogVisible.value = false
-  ElMessage.success(rowData.value.id ? '更新成功' : '新增成功')
+  ElMessage.success(isEdit ? '更新成功' : '新增成功')
   emits('updateData')
 }
 
@@ -76,7 +82,12 @@ defineExpose({
   <el-dialog v-model="dialogVisible" :title="custtitle" width="30%">
     <template #default>
       {{ rowData }}
-      <el-form :model="rowData" :rules="fromRules" label-width="100px">
+      <el-form
+        ref="fromRef"
+        :model="rowData"
+        :rules="fromRules"
+        label-width="100px"
+      >
         <el-form-item label="分类名称：" prop="cate_name">
           <el-input v-model="rowData.cate_name" />
         </el-form-item>
