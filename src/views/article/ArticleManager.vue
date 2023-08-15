@@ -10,6 +10,7 @@ import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 
 import * as dayjs from 'dayjs'
+import ArticleManagerDrawer from '@/views/article/components/ArticleManagerDrawer.vue'
 
 // 文章分类数据
 const articleChannelList = ref([])
@@ -53,14 +54,14 @@ initArticleChannelData()
 
 // 编辑文章处理事件
 const handlerEditAricle = (row) => {
-  console.log(row)
+  drawerRef.value.open('编辑文章', row)
 }
 
 // 删除文章处理事件
 const handlerDelAricle = async ({ id }) => {
   console.log(id)
   await articleDelArticleService(id)
-  initArticleData()
+  await initArticleData()
   ElMessage.success('删除文章成功')
 }
 
@@ -95,13 +96,19 @@ const onSearchClick = () => {
   queryParams.value.pagenum = 1
   initArticleData()
 }
+
+// 抽屉ref引用
+const drawerRef = ref()
+const onPublishClick = () => {
+  drawerRef.value.open('发布文章')
+}
 </script>
 
 <template>
   <div>
     <base-container title="文章管理">
       <template #right-extra>
-        <el-button type="primary">发布文章</el-button>
+        <el-button @click="onPublishClick" type="primary">发布文章</el-button>
       </template>
       <template #default>
         <!-- 顶部表单 -->
@@ -180,6 +187,7 @@ const onSearchClick = () => {
         />
       </template>
     </base-container>
+    <ArticleManagerDrawer ref="drawerRef"></ArticleManagerDrawer>
   </div>
 </template>
 
