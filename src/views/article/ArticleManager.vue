@@ -85,6 +85,12 @@ const handleCurrentChange = (val) => {
   queryParams.value.pagenum = val
   initArticleData()
 }
+
+const onSearchClick = () => {
+  // 搜索时，应该重置当前页为1
+  queryParams.value.pagenum = 1
+  initArticleData()
+}
 </script>
 
 <template>
@@ -115,9 +121,7 @@ const handleCurrentChange = (val) => {
           </el-form-item>
           <el-form-item>
             <template #default>
-              <el-button @click="initArticleData()" type="primary"
-                >搜索</el-button
-              >
+              <el-button @click="onSearchClick" type="primary">搜索</el-button>
               <el-button @click="resetSearch">重置</el-button>
             </template>
           </el-form-item>
