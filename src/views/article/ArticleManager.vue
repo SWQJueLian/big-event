@@ -128,7 +128,11 @@ const onSearchClick = () => {
         </el-form>
         <!-- 中间表格 -->
         <el-table :data="articleDataList" style="width: 100%">
-          <el-table-column prop="title" label="标题"></el-table-column>
+          <el-table-column prop="title" label="标题">
+            <template #default="scope">
+              <el-link type="primary">{{ scope.row.title }}</el-link>
+            </template>
+          </el-table-column>
           <el-table-column prop="cate_name" label="分类"></el-table-column>
           <el-table-column prop="pub_date" label="发布时间">
             <template #default="scope">
