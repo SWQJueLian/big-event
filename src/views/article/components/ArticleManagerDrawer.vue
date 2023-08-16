@@ -9,6 +9,8 @@ import { Plus } from '@element-plus/icons-vue'
 
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
+import { imageUrlToFile } from '@/utils/tools'
+import { baseurl } from '@/utils/request'
 
 // 控制是否显示抽屉
 const openDrawer = ref(false)
@@ -31,6 +33,8 @@ const fromRules = ref({
   cate_id: [{ required: true, message: '请输入文章标题', trigger: 'blur' }]
 })
 
+const imageUrl = ref('')
+
 const open = async (title, rowData) => {
   openDrawer.value = true
   cust_title.value = title
@@ -39,15 +43,22 @@ const open = async (title, rowData) => {
   if (rowData) {
     fromModel.value = { ...fromModel.value, ...rowData }
     const resp = await articleGetArticleDetailService(rowData.id)
-    console.log(resp)
+    console.log('获取文章详情：', resp)
     fromModel.value = { ...fromModel.value, ...resp.data }
+    // 获取文章详情的url
+    const fullurl = baseurl + fromModel.value.cover_img
+    // console.log(fullurl)
+    const imgfile = await imageUrlToFile(fullurl, fromModel.value.cover_img)
+    console.log('imgfile: ', imgfile)
+    fromModel.value.cover_img = imgfile
+    // console.log(URL.createObjectURL(imgfile))
+    imageUrl.value = URL.createObjectURL(imgfile)
   } else {
     // 如果是发布新文章，则将fromModel重置，因为会在编辑和发布之间切换
     fromModel.value = { ...defaultObj }
+    // 图片预览也需要清空
+    imageUrl.value = ''
   }
-
-  // 图片预览也需要清空
-  imageUrl.value = ''
 }
 
 const articleChannelList = ref([])
@@ -62,7 +73,6 @@ const initArticleChannelData = async () => {
 // 编辑和新增文章都需要获取文章分类
 initArticleChannelData()
 
-const imageUrl = ref('')
 const onChangeImg = (rawFile) => {
   console.log('上传图片：', rawFile)
   // 这行代码是参考element plus中的示例的
