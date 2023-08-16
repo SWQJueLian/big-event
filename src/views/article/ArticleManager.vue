@@ -113,6 +113,11 @@ const handlerUpdateData = (type) => {
   ElMessage.success(type === 'add' ? '添加文章成功！' : '编辑文章成功！')
   initArticleData()
 }
+
+// 预览文章
+const onReviewArticle = () => {
+  ElMessage.success('预览文章....懒得实现了，一个样')
+}
 </script>
 
 <template>
@@ -156,7 +161,9 @@ const handlerUpdateData = (type) => {
         >
           <el-table-column prop="title" label="标题">
             <template #default="scope">
-              <el-link type="primary">{{ scope.row.title }}</el-link>
+              <el-link @click="onReviewArticle(scope.row.id)" type="primary">{{
+                scope.row.title
+              }}</el-link>
             </template>
           </el-table-column>
           <el-table-column prop="cate_name" label="分类"></el-table-column>
