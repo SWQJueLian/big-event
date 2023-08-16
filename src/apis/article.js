@@ -45,3 +45,13 @@ export const articleGetArticleDetailService = (id) => {
     params: { id }
   })
 }
+
+// 添加文章
+export const articleAddService = (data) => {
+  return request.post('/my/article/add', data)
+}
+
+// 更新文章
+export const articleUpdateService = (data) => {
+  return request.put('/my/article/info', data)
+}

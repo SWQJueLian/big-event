@@ -1,8 +1,10 @@
 <script setup>
 import { ref } from 'vue'
 import {
+  articleAddService,
   articleGetArticleDetailService,
-  articleGetDataListService
+  articleGetDataListService,
+  articleUpdateService
 } from '@/apis/article'
 
 import { Plus } from '@element-plus/icons-vue'
@@ -30,7 +32,11 @@ const fromModel = ref(defaultObj)
 
 const fromRules = ref({
   title: [{ required: true, message: '请输入文章标题', trigger: 'blur' }],
-  cate_id: [{ required: true, message: '请输入文章标题', trigger: 'blur' }]
+  cate_id: [{ required: true, message: '请输入文章标题', trigger: 'blur' }],
+  cover_img: [
+    { required: true, message: '请上传文章封面图标', trigger: 'blur' }
+  ],
+  content: [{ required: true, message: '请编写文章内容', trigger: 'blur' }]
 })
 
 const imageUrl = ref('')
@@ -54,10 +60,12 @@ const open = async (title, rowData) => {
     // console.log(URL.createObjectURL(imgfile))
     imageUrl.value = URL.createObjectURL(imgfile)
   } else {
+    console.log('发布新文章.....')
     // 如果是发布新文章，则将fromModel重置，因为会在编辑和发布之间切换
     fromModel.value = { ...defaultObj }
     // 图片预览也需要清空
     imageUrl.value = ''
+    console.log(fromModel.value)
   }
 }
 
@@ -81,6 +89,41 @@ const onChangeImg = (rawFile) => {
   // 赋值给fromModel
   fromModel.value.cover_img = rawFile.raw
 }
+
+// 表单引用
+const fromRef = ref()
+
+const emits = defineEmits(['updateData'])
+
+const onPublishArticle = async (type) => {
+  // console.log(type)
+  // 校验表单
+  await fromRef.value.validate()
+  fromModel.value.state = type
+  // 发送请求编辑和新增文章
+  const formdata = new FormData()
+  Object.entries(fromModel.value).forEach((item) => {
+    // console.log(item)
+    formdata.append(item[0], item[1])
+  })
+  // console.log(formdata)
+
+  if (fromModel.value?.id) {
+    // 编辑文章
+    const resp = await articleUpdateService(formdata)
+    console.log('编辑文章返回：', resp)
+  } else {
+    // 新增文章
+    const resp = await articleAddService(formdata)
+    console.log('新增文章返回：', resp)
+  }
+  // 关闭抽屉
+  openDrawer.value = false
+
+  // 触发父组件事件，更新管理列表
+  emits('updateData', fromModel.value?.id ? 'edit' : 'add')
+}
+
 defineExpose({
   open
 })
@@ -91,7 +134,7 @@ defineExpose({
     <template #default>
       <!-- 由于还有一个预览功能，课程上是没有说的，这里就再提供插槽对外定制预览，否则是适合编辑和添加功能的-->
       <slot name="content">
-        <el-form :model="fromModel" :rules="fromRules">
+        <el-form :model="fromModel" :rules="fromRules" ref="fromRef">
           <el-form-item label="文章标题：" prop="title">
             <el-input v-model="fromModel.title" />
           </el-form-item>
@@ -106,7 +149,7 @@ defineExpose({
               >
             </el-select>
           </el-form-item>
-          <el-form-item label="文章封面：">
+          <el-form-item label="文章封面：" prop="cover_img">
             <template #default>
               <!--
               :auto-upload="false"  控制是否自动上传。
@@ -128,7 +171,7 @@ defineExpose({
               </el-upload>
             </template>
           </el-form-item>
-          <el-form-item label="文章内容：">
+          <el-form-item label="文章内容：" prop="content">
             <template #default>
               <div class="editor">
                 <quill-editor
@@ -143,6 +186,16 @@ defineExpose({
         </el-form>
       </slot>
     </template>
+    <template #footer>
+      <div class="footer">
+        <el-button @click="onPublishArticle('已发布')" type="primary"
+          >发布</el-button
+        >
+        <el-button @click="onPublishArticle('草稿')" type="info"
+          >发布到草稿箱</el-button
+        >
+      </div>
+    </template>
   </el-drawer>
 </template>
 
@@ -152,6 +205,13 @@ defineExpose({
   :deep(.ql-editor) {
     min-height: 300px;
   }
+}
+
+.footer {
+  border-top: #d9d9d9 solid 1px;
+  display: flex;
+  justify-content: flex-start;
+  padding: 20px;
 }
 
 .avatar-uploader .avatar {

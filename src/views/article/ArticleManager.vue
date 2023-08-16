@@ -102,6 +102,17 @@ const drawerRef = ref()
 const onPublishClick = () => {
   drawerRef.value.open('发布文章')
 }
+
+const handlerUpdateData = (type) => {
+  if (type === 'add') {
+    // 正常来讲，新增的文章都是在最前面的，他这玩意排序在最后...
+    queryParams.value.pagenum = Math.ceil(
+      (totalPage.value + 1) / queryParams.value.pagesize
+    )
+  }
+  ElMessage.success(type === 'add' ? '添加文章成功！' : '编辑文章成功！')
+  initArticleData()
+}
 </script>
 
 <template>
@@ -187,7 +198,10 @@ const onPublishClick = () => {
         />
       </template>
     </base-container>
-    <ArticleManagerDrawer ref="drawerRef"></ArticleManagerDrawer>
+    <ArticleManagerDrawer
+      ref="drawerRef"
+      @updateData="handlerUpdateData($event)"
+    ></ArticleManagerDrawer>
   </div>
 </template>
 
