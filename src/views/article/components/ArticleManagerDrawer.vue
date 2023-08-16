@@ -7,6 +7,9 @@ import {
 
 import { Plus } from '@element-plus/icons-vue'
 
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
+
 // 控制是否显示抽屉
 const openDrawer = ref(false)
 
@@ -116,7 +119,16 @@ defineExpose({
             </template>
           </el-form-item>
           <el-form-item label="文章内容：">
-            <template #default>内容...</template>
+            <template #default>
+              <div class="editor">
+                <quill-editor
+                  theme="snow"
+                  v-model:content="fromModel.content"
+                  contentType="html"
+                >
+                </quill-editor>
+              </div>
+            </template>
           </el-form-item>
         </el-form>
       </slot>
@@ -124,14 +136,21 @@ defineExpose({
   </el-drawer>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
+.editor {
+  width: 100%;
+  :deep(.ql-editor) {
+    min-height: 300px;
+  }
+}
+
 .avatar-uploader .avatar {
   width: 178px;
   height: 178px;
   display: block;
 }
 
-:deep .avatar-uploader .el-upload {
+:deep(.avatar-uploader .el-upload) {
   border: 1px dashed var(--el-border-color);
   border-radius: 6px;
   cursor: pointer;
@@ -140,7 +159,7 @@ defineExpose({
   transition: var(--el-transition-duration-fast);
 }
 
-:deep .avatar-uploader .el-upload:hover {
+:deep(.avatar-uploader .el-upload:hover) {
   border-color: var(--el-color-primary);
 }
 
