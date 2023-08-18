@@ -60,8 +60,11 @@ const isLoading = ref(false)
       <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
     </el-upload>
     <div style="padding-top: 30px">
-      <el-button type="primary" @click="onSelectBtnClick">选择文件</el-button>
+      <el-button size="large" type="primary" @click="onSelectBtnClick"
+        >选择文件</el-button
+      >
       <el-button
+        size="large"
         :disabled="!imageUrl"
         :loading="isLoading"
         type="success"
@@ -94,8 +97,8 @@ const isLoading = ref(false)
 .el-icon.avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
-  width: 178px;
-  height: 178px;
+  width: 350px;
+  height: 350px;
   text-align: center;
 }
 </style>
