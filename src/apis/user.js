@@ -32,3 +32,12 @@ export const userUpdateUserInfoService = (data) => {
 export const userUpdateUserAvatarService = (avatar) => {
   return request.patch('/my/update/avatar', { avatar })
 }
+
+// 修改用户密码
+export const userRestUserPasswordService = (old_pwd, new_pwd, re_pwd) => {
+  return request.patch('/my/updatepwd', {
+    old_pwd,
+    new_pwd,
+    re_pwd
+  })
+}
