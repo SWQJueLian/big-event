@@ -27,3 +27,8 @@ export const userBasicInfoService = () => {
 export const userUpdateUserInfoService = (data) => {
   return request.put('/my/userinfo', data)
 }
+
+// 更新用户头像
+export const userUpdateUserAvatarService = (avatar) => {
+  return request.patch('/my/update/avatar', { avatar })
+}
