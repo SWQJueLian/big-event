@@ -22,3 +22,8 @@ export const userLoginService = (username, password) => {
 export const userBasicInfoService = () => {
   return request.get('/my/userinfo')
 }
+
+// 更新用户基本资料
+export const userUpdateUserInfoService = (data) => {
+  return request.put('/my/userinfo', data)
+}

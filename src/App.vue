@@ -1,8 +1,4 @@
-<script setup>
-import { useUserStore } from '@/stores'
-
-const userStore = useUserStore()
-</script>
+<script setup></script>
 
 <template>
   <div>
