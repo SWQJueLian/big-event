@@ -35,11 +35,15 @@ const onSelectBtnClick = () => {
 }
 
 const onSubmitAvatar = async () => {
+  isLoading.value = true
   await userUpdateUserAvatarService(imageUrl.value)
   ElMessage.success('更新头像成功')
   // 更新pinia中的用户头像数据
   useUserStore().userInfo.user_pic = imageUrl.value
+  isLoading.value = false
 }
+
+const isLoading = ref(false)
 </script>
 
 <template>
@@ -57,7 +61,13 @@ const onSubmitAvatar = async () => {
     </el-upload>
     <div style="padding-top: 30px">
       <el-button type="primary" @click="onSelectBtnClick">选择文件</el-button>
-      <el-button type="success" @click="onSubmitAvatar">更新头像</el-button>
+      <el-button
+        :disabled="!imageUrl"
+        :loading="isLoading"
+        type="success"
+        @click="onSubmitAvatar"
+        >更新头像</el-button
+      >
     </div>
   </base-container>
 </template>
