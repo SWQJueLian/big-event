@@ -1,6 +1,8 @@
 # big-event
 
-This template should help get you started developing with Vue 3 in Vite.
+基于Vue3语法 + Element Plus组件编写。
+
+相对于课程，都会有较多的个人优化地方，详见commit提交，代码中都写了注解。
 
 ## Recommended IDE Setup
 
